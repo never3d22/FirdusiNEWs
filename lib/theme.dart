@@ -134,7 +134,7 @@ ThemeData buildTheme() {
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
     ),
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
