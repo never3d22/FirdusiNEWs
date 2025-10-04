@@ -21,118 +21,121 @@ class DishCard extends StatelessWidget {
 
     final theme = Theme.of(context);
     final isCompact = margin == EdgeInsets.zero;
-    return Card(
-      margin: margin ?? const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      clipBehavior: Clip.antiAlias,
-      elevation: isCompact ? 3 : 6,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(isCompact ? 20 : 28),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Ink.image(
-                  image: NetworkImage(dish.imageUrl),
-                  fit: BoxFit.cover,
-                  child: InkWell(onTap: () => _showDetails(context)),
-                ),
-                Positioned(
-                  right: 16,
-                  top: 16,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      child: Text(
-                        '${dish.weight} г',
-                        style: theme.textTheme.labelMedium?.copyWith(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              isCompact ? 16 : 20,
-              isCompact ? 14 : 18,
-              isCompact ? 16 : 20,
-              isCompact ? 12 : 16,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  dish.name,
-                  style: theme.textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  dish.description,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.72),
-                  ),
-                  maxLines: isCompact ? 3 : null,
-                  overflow:
-                      isCompact ? TextOverflow.ellipsis : TextOverflow.visible,
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.scale_outlined,
-                      size: 18,
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '${dish.weight} г',
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.72),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${dish.price.toStringAsFixed(0)} ₽',
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    quantity == 0
-                        ? FilledButton.icon(
-                            onPressed: () => context.read<AppState>().addDish(dish),
-                            icon: const Icon(Icons.add_circle_outline),
-                            label: const Text('Добавить'),
-                          )
-                        : _QuantityControl(dish: dish, quantity: quantity),
-                  ],
-                ),
-              ],
-            ),
+
+    return Container(
+      margin: margin ?? const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(isCompact ? 26 : 32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: isCompact ? 18 : 26,
+            offset: const Offset(0, 12),
           ),
         ],
+      ),
+      child: Card(
+        margin: EdgeInsets.zero,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(isCompact ? 26 : 32),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _DishImage(
+              dish: dish,
+              isCompact: isCompact,
+              onTap: () => _showDetails(context),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                isCompact ? 18 : 24,
+                isCompact ? 16 : 22,
+                isCompact ? 18 : 24,
+                isCompact ? 18 : 22,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    dish.name,
+                    style: theme.textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    dish.description,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      height: 1.4,
+                    ),
+                    maxLines: isCompact ? 3 : 4,
+                    overflow:
+                        isCompact ? TextOverflow.ellipsis : TextOverflow.visible,
+                  ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      _FeatureChip(
+                        icon: Icons.scale_outlined,
+                        label: '${dish.weight} г',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Стоимость',
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.55),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${dish.price.toStringAsFixed(0)} ₽',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 220),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        transitionBuilder: (child, animation) => ScaleTransition(
+                          scale: animation,
+                          child: child,
+                        ),
+                        child: quantity == 0
+                            ? FilledButton.icon(
+                                key: const ValueKey('add-button'),
+                                onPressed: () => context.read<AppState>().addDish(dish),
+                                icon: const Icon(Icons.add_circle_outline),
+                                label: const Text('В корзину'),
+                              )
+                            : _QuantityControl(
+                                key: ValueKey('quantity-$quantity'),
+                                dish: dish,
+                                quantity: quantity,
+                              ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -146,6 +149,82 @@ class DishCard extends StatelessWidget {
   }
 }
 
+class _DishImage extends StatelessWidget {
+  const _DishImage({
+    required this.dish,
+    required this.isCompact,
+    required this.onTap,
+  });
+
+  final Dish dish;
+  final bool isCompact;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return ClipRRect(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(isCompact ? 26 : 32),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Ink(
+          decoration: const BoxDecoration(color: Colors.black12),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Ink.image(
+                image: NetworkImage(dish.imageUrl),
+                fit: BoxFit.cover,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.0),
+                      Colors.black.withOpacity(0.45),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 18,
+                bottom: 18,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    color: theme.colorScheme.primary.withOpacity(0.9),
+                    boxShadow: [
+                      BoxShadow(
+                        color: theme.colorScheme.primary.withOpacity(0.25),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    child: Text(
+                      '${dish.price.toStringAsFixed(0)} ₽',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _DishDetails extends StatelessWidget {
   const _DishDetails({required this.dish});
 
@@ -153,43 +232,81 @@ class _DishDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final appState = context.watch<AppState>();
     final quantity = appState.cart[dish.id] ?? 0;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: EdgeInsets.only(
+        left: 24,
+        right: 24,
+        top: 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(dish.name, style: Theme.of(context).textTheme.titleLarge),
+          Text(dish.name, style: theme.textTheme.titleLarge),
           const SizedBox(height: 12),
-          Text(dish.description),
-          const SizedBox(height: 12),
+          Text(
+            dish.description,
+            style: theme.textTheme.bodyMedium?.copyWith(height: 1.4),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _FeatureChip(
+                icon: Icons.scale_outlined,
+                label: '${dish.weight} г',
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${dish.price.toStringAsFixed(0)} ₽',
-                    style: Theme.of(context).textTheme.titleMedium,
+                    'Стоимость',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    ),
                   ),
+                  const SizedBox(height: 4),
                   Text(
-                    '${dish.weight} г',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelMedium
-                        ?.copyWith(color: Colors.grey[600]),
+                    '${dish.price.toStringAsFixed(0)} ₽',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
                 ],
               ),
-              quantity == 0
-                  ? FilledButton(
-                      onPressed: () => context.read<AppState>().addDish(dish),
-                      child: const Text('Добавить'),
-                    )
-                  : _QuantityControl(dish: dish, quantity: quantity),
+              const Spacer(),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                transitionBuilder: (child, animation) => ScaleTransition(
+                  scale: animation,
+                  child: child,
+                ),
+                child: quantity == 0
+                    ? FilledButton(
+                        key: const ValueKey('details-add-button'),
+                        onPressed: () => context.read<AppState>().addDish(dish),
+                        child: const Text('Добавить'),
+                      )
+                    : _QuantityControl(
+                        key: ValueKey('details-quantity-$quantity'),
+                        dish: dish,
+                        quantity: quantity,
+                      ),
+              ),
             ],
           ),
         ],
@@ -199,30 +316,73 @@ class _DishDetails extends StatelessWidget {
 }
 
 class _QuantityControl extends StatelessWidget {
-  const _QuantityControl({required this.dish, required this.quantity});
+  const _QuantityControl({super.key, required this.dish, required this.quantity});
 
   final Dish dish;
   final int quantity;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final theme = Theme.of(context);
+    return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(26),
+        color: theme.colorScheme.primary.withOpacity(0.1),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            icon: const Icon(Icons.remove_circle_outline),
+            icon: const Icon(Icons.remove_rounded),
             onPressed: () => context.read<AppState>().decrementDish(dish.id),
           ),
-          Text('$quantity', style: Theme.of(context).textTheme.titleMedium),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Text(
+              '$quantity',
+              style: theme.textTheme.titleMedium,
+            ),
+          ),
           IconButton(
-            icon: const Icon(Icons.add_circle_outline),
+            icon: const Icon(Icons.add_rounded),
             onPressed: () => context.read<AppState>().incrementDish(dish.id),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _FeatureChip extends StatelessWidget {
+  const _FeatureChip({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        color: theme.colorScheme.primary.withOpacity(0.08),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: theme.colorScheme.primary),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
