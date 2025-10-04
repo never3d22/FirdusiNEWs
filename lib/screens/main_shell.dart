@@ -19,6 +19,7 @@ class _MainShellState extends State<MainShell> {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
+    final theme = Theme.of(context);
     final destinations = [
       const NavigationDestination(icon: Icon(Icons.restaurant_menu), label: 'Меню'),
       NavigationDestination(
@@ -50,10 +51,29 @@ class _MainShellState extends State<MainShell> {
         index: _index,
         children: const [HomeScreen(), CartScreen(), ProfileScreen()],
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _index,
-        destinations: destinations,
-        onDestinationSelected: (value) => setState(() => _index = value),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.primary.withOpacity(0.12),
+                blurRadius: 32,
+                offset: const Offset(0, 18),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: NavigationBar(
+              selectedIndex: _index,
+              destinations: destinations,
+              onDestinationSelected: (value) => setState(() => _index = value),
+              elevation: 0,
+            ),
+          ),
+        ),
       ),
     );
   }
